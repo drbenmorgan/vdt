@@ -1,32 +1,37 @@
 # Rules for making the so library with the vector and libm-like signatures
 
 # Define this directory's flags:
-SET(CMAKE_CXX_FLAGS  ${LIB_FLAGS})
+set(CMAKE_CXX_FLAGS  ${LIB_FLAGS})
+include_directories(${INC_DIR})
 
-include_directories ( ${INC_DIR} )
-
-if(BUILD_SHARED_LIBS)
-  message(STATUS "Libraries are configured as: SHARED")
-else()
-  message(STATUS "Libraries are configured as: STATIC")
-endif()
-
+# Generate the code for the lib
+find_package(PythonInterp REQUIRED)
 if(PRELOAD)
-  message(STATUS "Symbols for the preload requested")
+  set(SIGGENOPTS "-p")
+else()
+  set(SIGGENOPTS)
 endif()
+
+add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/vdtMath_signatures.cc
+  COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/src/signatures_generator.py ${SIGGENOPTS}
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  COMMENT "Generating VDT signatures"
+  )
 
 # The library
-ADD_LIBRARY(vdt ${SRC_DIR}/vdtMath_signatures.cc ${INC_DIR}/vdtMath.h )
+add_library(vdt ${PROJECT_BINARY_DIR}/vdtMath_signatures.cc ${INC_DIR}/vdtMath.h)
 
 # Installation of the lib
-INSTALL(TARGETS vdt  
-        DESTINATION lib)
+install(TARGETS vdt DESTINATION lib)
         
-
 # Build Vc wrapper (without c++11)
 if(USE_VC)
-    SET(CMAKE_CXX_FLAGS  "${LIB_FLAGS} -fabi-version=6")
-    include_directories( ${CMAKE_SOURCE_DIR}/Vc  ${CMAKE_SOURCE_DIR}/Vc/include )
-    add_library(VcWrapper ${SRC_DIR}/vdtdiag_vcWrapper.cc ${SRC_DIR}/vdtdiag_vcWrapper.h)
-    target_link_libraries(VcWrapper libVc.a)
+  set(CMAKE_CXX_FLAGS  "${LIB_FLAGS} -fabi-version=6")
+  include_directories(${PROJECT_SOURCE_DIR}/Vc)
+  include_directories(${PROJECT_SOURCE_DIR}/Vc/include)
+  add_library(VcWrapper 
+    ${SRC_DIR}/vdtdiag_vcWrapper.cc 
+    ${SRC_DIR}/vdtdiag_vcWrapper.h
+    )
+  target_link_libraries(VcWrapper libVc.a)
 endif()
