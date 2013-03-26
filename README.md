@@ -1,4 +1,4 @@
-CERN VDT (**V**ectorise**D** ma**T**h) C++ Library for Fast Math
+CERN VDT (VectoriseD maTh) C++ Library for Fast Math
 ================================================================
 This project is a github mirror of CERN's [VDT C++ Library](https://svnweb.cern.ch/trac/vdt) implementing **fast** implementations of common 
 mathematical functions. I'm providing a mirror for convenience and to add
