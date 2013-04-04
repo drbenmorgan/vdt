@@ -5,18 +5,33 @@ project(vdt)
 # Include the defaults
 include(CMakeDefaults.txt)
 
+#-----------------------------------------------------------------------
 # configuration options -- you may change them when running cmake
 # with 'cmake -D <OPT>=<value> .'
-option(DIAG "Build in diagnostic mode - all diagnostic exes" OFF)
-option(AVX "Use AVX instruction set" OFF)
-option(AVX2 "Use AVX2 instruction set" OFF)
-option(SSE "Use SSE instruction set" ON)
-option(NEON "Use NEON instruction set" OFF)
-option(BUILD_SHARED_LIBS "Build libraries as SHARED instead of STATIC" ON)
-option(PRELOAD "Create in the library the symbols to preload the library" OFF)
-option(USE_VC "Use Vc library - requires symlink to Vc from ${PROJECT_SOURCE_DIR}" OFF)
+
+# - Build shared libs
+option(BUILD_SHARED_LIBS "Build shared libraries in addition to static" ON)
+
+# - Testing
+option(VDT_ENABLE_TESTING "Build unit and performance tests" ON)
+
+# - Provide preloading interface
+option(VDT_ENABLE_PRELOAD "Create symbols to preload the library" OFF)
+
+# - Instruction set choices
+option(VDT_WITH_AVX  "Build with AVX instruction set" OFF)
+option(VDT_WITH_AVX2 "Build with AVX2 instruction set" OFF)
+option(VDT_WITH_SSE  "Build with SSE instruction set" ON)
+option(VDT_WITH_NEON "Build with NEON instruction set" OFF)
+
+# - Vc library option
+option(VDT_WITH_VC "Build with Vc library" OFF)
+
+# - Need to update this so it works through the build mode
 option(DEBUG "Compile library with debug symbols" OFF)
 
+#-----------------------------------------------------------------------
+# Compiler detection and setup
 # determine compiler type and version
 set(COMPILER_IS_47_GCC false)
 set(COMPILER_IS_OLD_GCC false)
@@ -24,7 +39,6 @@ set(COMPILER_IS_ICC false)
 
 if(CMAKE_CXX_COMPILER MATCHES "/(icpc|icc)$")
   set(COMPILER_IS_ICC true)
-  message(STATUS "Found icc")
 elseif(CMAKE_COMPILER_IS_GNUCXX)
   # check the GCC version (taken from Vc library)
    exec_program(${CMAKE_C_COMPILER} ARGS -dumpversion OUTPUT_VARIABLE _gcc_version)
@@ -39,11 +53,10 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
   
   if("${_gcc_version}" VERSION_LESS "4.7.0")
     set(COMPILER_IS_OLD_GCC true)
-    message(STATUS "You are running gcc older than 4.7, turning off Vc, AVX and DIAG options")
-    change_option(USE_VC 0)
-    change_option(AVX 0)
-    change_option(AVX2 0)
-    change_option(DIAG 0)
+    message(STATUS "You are running gcc older than 4.7, turning off Vc, AVX options")
+    change_option(VDT_WITH_VC 0)
+    change_option(VDT_WITH_AVX 0)
+    change_option(VDT_WITH_AVX2 0)
   else()
     set(COMPILER_IS_47_GCC true)
   endif()
@@ -53,25 +66,21 @@ endif()
 
 # process options that can be processed here
 # SIMD instructions set
-if(NEON)
-  message(STATUS "Using NEON instructions!")
+if(VDT_WITH_NEON)
   set(SSE_AVX "-mfpu=neon ")
 else()
-  if(SSE AND (NOT (AVX OR AVX2)))
-    message(STATUS "Using SSE instructions!")
+  if(VDT_WITH_SSE AND (NOT (VDT_WITH_AVX OR VDT_WITH_AVX2)))
     set(SSE_AVX "-msse")
   endif()
 
-  if(AVX AND (NOT AVX2))
-    message(STATUS "Using AVX instructions!")
+  if(VDT_WITH_AVX AND (NOT VDT_WITH_AVX2))
     set (SSE_AVX "-mavx")
     if(COMPILER_IS_ICC)
       set(SSE_AVX "-xavx")
     endif()
   endif()
 
-  if(AVX2)
-    message(STATUS "Using AVX2 instructions!")
+  if(VDT_WITH_AVX2)
     set(SSE_AVX "-mavx2")
     if(COMPILER_IS_ICC)
       set(SSE_AVX "-xavx2")
@@ -87,42 +96,25 @@ if(SVML)
 endif()
 
 # Vc setup
-if(USE_VC)
-  message(STATUS "VC usage is turned on now, if you do not intend to use it, run 'cmake -D USE_VC=0 .'")
-  set(VC_SYMLINK_MSG "To use Vc you must have a (symlink) 'Vc' leading to the Vc rootdir in your ${PROJECT_SOURCE_DIR}")
+if(VDT_WITH_VC)
   #check for files
   set(VC_LIB_NAME "${PROJECT_SOURCE_DIR}/Vc/libVc.a")
   set(VC_HEADER_NAME "${PROJECT_SOURCE_DIR}/Vc/include/Vc/Vc")
 
   if(NOT EXISTS ${VC_LIB_NAME}) 
-    message(STATUS "Vc lib not found at ${VC_LIB_NAME}, turning off Vc usage")
-    message(STATUS ${VC_SYMLINK_MSG})
     change_option(USE_VC 0)
   endif()  
   
   if(EXISTS ${VC_LIB_NAME})
     if(NOT EXISTS ${VC_HEADER_NAME}) 
-      message(STATUS "Vc header not found at ${VC_HEADER_NAME}, turning off Vc usage")
-      message(STATUS ${VC_SYMLINK_MSG})
       change_option(USE_VC 0)
     endif() 
   endif()
 
-  link_directories(${CMAKE_SOURCE_DIR}/Vc) 
+  link_directories(${PROJECT_SOURCE_DIR}/Vc) 
 endif()
 
 # set compiler options
-set(LIBTIMING "")
-set(LIBTIMINGAPPLE "")
-if(DIAG)
-  # Library for time measurement: OSx and Linux
-  set (LIBTIMING "rt")
-  # do not set it if on OSx
-  if(APPLE)
-    set(LIBTIMINGAPPLE "-framework Carbon")
-  endif() 
-endif(DIAG)
-
 # Compiler optimisations
 set(VECT_OPT "-O3 -ffast-math -ftree-vectorize")
 set(VECTORIZER_VERBOSITY "-ftree-vectorizer-verbose=0")
@@ -175,21 +167,33 @@ set(LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
 set(INC_DIR ${PROJECT_SOURCE_DIR}/include)
 
 
-#----------------------
+#-----------------------------------------------------------------------
+# Build submodules
+#
 add_subdirectory(src)
 add_subdirectory(lib)
-if(DIAG)
-  message("DIAG option is now on, building diagnostic programs")
+
+#-----------------------------------------------------------------------
+# Build testing
+#
+if(VDT_ENABLE_TESTING AND NOT COMPILER_IS_OLD_GCC)
+  set(LIBTIMING "")
+  set(LIBTIMINGAPPLE "")
+  # Library for time measurement: OSx and Linux
+  set (LIBTIMING "rt")
+  # do not set it if on OSx
+  if(APPLE)
+    set(LIBTIMINGAPPLE "-framework Carbon")
+  endif() 
+
+  enable_testing()
   add_subdirectory(progs)
   add_subdirectory(progs/units)
-else()
-  message("DIAG option is now off, building library only")
 endif()
 
-#--------------
-# Installation
-
-# Install location
+#-----------------------------------------------------------------------
+# Installation...
+#
 INSTALL(FILES
   include/asin.h
   include/atan.h

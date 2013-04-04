@@ -6,7 +6,7 @@ include_directories(${INC_DIR})
 
 # Generate the code for the lib
 find_package(PythonInterp REQUIRED)
-if(PRELOAD)
+if(VDT_ENABLE_PRELOAD)
   set(SIGGENOPTS "-p")
 else()
   set(SIGGENOPTS)
@@ -25,7 +25,7 @@ add_library(vdt ${PROJECT_BINARY_DIR}/vdtMath_signatures.cc ${INC_DIR}/vdtMath.h
 install(TARGETS vdt DESTINATION lib)
         
 # Build Vc wrapper (without c++11)
-if(USE_VC)
+if(VDT_WITH_VC)
   set(CMAKE_CXX_FLAGS  "${LIB_FLAGS} -fabi-version=6")
   include_directories(${PROJECT_SOURCE_DIR}/Vc)
   include_directories(${PROJECT_SOURCE_DIR}/Vc/include)
