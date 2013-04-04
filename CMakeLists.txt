@@ -22,7 +22,7 @@ include(VDTUtility)
 # with 'cmake -D <OPT>=<value> .'
 
 # - Build shared libs
-option(BUILD_SHARED_LIBS "Build shared libraries in addition to static" ON)
+option(BUILD_SHARED_LIBS "Build VDT as a shared library" ON)
 
 # - Testing
 option(VDT_ENABLE_TESTING "Build unit and performance tests" ON)
