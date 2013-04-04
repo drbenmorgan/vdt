@@ -102,12 +102,12 @@ if(VDT_WITH_VC)
   set(VC_HEADER_NAME "${PROJECT_SOURCE_DIR}/Vc/include/Vc/Vc")
 
   if(NOT EXISTS ${VC_LIB_NAME}) 
-    change_option(USE_VC 0)
+    change_option(VDT_WITH_VC 0)
   endif()  
   
   if(EXISTS ${VC_LIB_NAME})
     if(NOT EXISTS ${VC_HEADER_NAME}) 
-      change_option(USE_VC 0)
+      change_option(VDT_WITH_VC 0)
     endif() 
   endif()
 
@@ -164,14 +164,13 @@ set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set(LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
 
 # Common Includes
-set(INC_DIR ${PROJECT_SOURCE_DIR}/include)
+set(INC_DIR ${PROJECT_SOURCE_DIR}/vdt)
 
 
 #-----------------------------------------------------------------------
 # Build submodules
 #
-add_subdirectory(src)
-add_subdirectory(lib)
+add_subdirectory(vdt)
 
 #-----------------------------------------------------------------------
 # Build testing
@@ -187,28 +186,9 @@ if(VDT_ENABLE_TESTING AND NOT COMPILER_IS_OLD_GCC)
   endif() 
 
   enable_testing()
-  add_subdirectory(progs)
-  add_subdirectory(progs/units)
+  add_subdirectory(testing)
+else()
+  change_option(VDT_ENABLE_TESTING 0)
 endif()
 
-#-----------------------------------------------------------------------
-# Installation...
-#
-INSTALL(FILES
-  include/asin.h
-  include/atan.h
-  include/atan2.h
-  include/cos.h
-  include/exp.h
-  include/identity.h
-  include/inv.h
-  include/log.h
-  include/sincos.h
-  include/sin.h
-  include/sqrt.h
-  include/tan.h
-  include/vdtcore_common.h
-  include/vdtMath.h
-  DESTINATION include/vdt
-  )
 

@@ -7,8 +7,8 @@
 #define _VDT_EXTERNAL_LIB_CFG_
 
 //Vc usage setup
-#cmakedefine01 USE_VC
-#if USE_VC
+#cmakedefine01 VDT_WITH_VC
+#if VDT_WITH_VC
   //use this flag through the program
   #define _VC_AVAILABLE_
 #endif
