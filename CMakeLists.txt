@@ -2,8 +2,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(vdt)
 
-# Include the defaults
-include(CMakeDefaults.txt)
+# Include the utility module
+include(VDTUtility.cmake)
 
 #-----------------------------------------------------------------------
 # configuration options -- you may change them when running cmake
