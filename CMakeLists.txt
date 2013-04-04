@@ -1,9 +1,21 @@
-# VDT Math LIbrary
-cmake_minimum_required(VERSION 2.6)
+# - CMake build for the VDT Math Library
+
+#-----------------------------------------------------------------------
+# Project configuration
+#
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(vdt)
 
-# Include the utility module
-include(VDTUtility.cmake)
+set(VDT_VERSION_MAJOR 0)
+set(VDT_VERSION_MINOR 3)
+set(VDT_VERSION_PATCH 2)
+set(VDT_VERSION "${VDT_VERSION_MAJOR}.${VDT_VERSION_MINOR}.${VDT_VERSION_PATCH}")
+
+#-----------------------------------------------------------------------
+# CMake configuration
+#
+list(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")
+include(VDTUtility)
 
 #-----------------------------------------------------------------------
 # configuration options -- you may change them when running cmake
