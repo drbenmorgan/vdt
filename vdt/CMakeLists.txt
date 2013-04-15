@@ -39,6 +39,6 @@ set_target_properties(vdt
   )
 
 # Installation of the lib
-install(TARGETS vdt DESTINATION lib)
+install(TARGETS vdt EXPORT vdt-libraries DESTINATION lib)
 install(FILES ${VDT_PUBLIC_HEADERS} DESTINATION include/vdt)
 

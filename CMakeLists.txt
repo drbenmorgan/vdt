@@ -200,4 +200,23 @@ install(FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pkgconfig/vdt.pc
   DESTINATION lib/pkgconfig
   )
 
+# CMake
+configure_file(
+  cmake/vdt-config-version.cmake.in
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/vdt-${VDT_VERSION}/vdt-config-version.cmake
+  @ONLY
+  )
+configure_file(
+  cmake/vdt-config.cmake.in
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/vdt-${VDT_VERSION}/vdt-config.cmake
+  @ONLY
+  )
+
+install(FILES
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/vdt-${VDT_VERSION}/vdt-config-version.cmake
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/vdt-${VDT_VERSION}/vdt-config.cmake
+  DESTINATION lib/cmake/vdt-${VDT_VERSION}
+  )
+
+install(EXPORT vdt-libraries DESTINATION lib/cmake/vdt-${VDT_VERSION})
 
