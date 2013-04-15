@@ -156,8 +156,10 @@ set(COMMON_FLAGS "${INTEL_SVML_FLAGS} ${SSE_AVX} ${INLINE_OPT} ${WARNING_FLAGS}"
 set(LIB_FLAGS "${VERBOSITY_OPT} ${VECT_OPT} ${VECTORIZER_VERBOSITY} ${COMMON_FLAGS}")
 
 # Locations
-# Location of executables
+# Location of executables, libraries, archives
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 #-----------------------------------------------------------------------
 # Build submodules
@@ -183,5 +185,19 @@ if(VDT_ENABLE_TESTING AND NOT COMPILER_IS_OLD_GCC)
 else()
   change_option(VDT_ENABLE_TESTING 0)
 endif()
+
+#-----------------------------------------------------------------------
+# Configure and install support files
+
+# - Install Tree
+# PkgConfig
+configure_file(
+  cmake/vdt.pc.in 
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pkgconfig/vdt.pc 
+  @ONLY
+  )
+install(FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pkgconfig/vdt.pc 
+  DESTINATION lib/pkgconfig
+  )
 
 

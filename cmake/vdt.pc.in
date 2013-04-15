@@ -1,0 +1,11 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+includedir=${prefix}/include/vdt
+libdir=${prefix}/lib
+
+Name: vdt
+Description: CERN VDT (VectorizeD maTh) C++ Library for Fast Math
+Version: @VDT_VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lvdt
+
