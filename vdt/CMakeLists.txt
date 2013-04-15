@@ -3,24 +3,13 @@
 # Define this directory's flags:
 set(CMAKE_CXX_FLAGS  ${LIB_FLAGS})
 include_directories(${PROJECT_SOURCE_DIR}/vdt)
+include_directories(${PROJECT_BINARY_DIR})
+
 
 #-----------------------------------------------------------------------
-# Generate the code for the lib
+# Build the VDT library
 #
-find_package(PythonInterp REQUIRED)
-if(VDT_ENABLE_PRELOAD)
-  set(SIGGENOPTS "-p")
-else()
-  set(SIGGENOPTS)
-endif()
-
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/vdtMath_signatures.cc
-  COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/vdt/signatures_generator.py ${SIGGENOPTS}
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-  COMMENT "Generating VDT signatures"
-  )
-
-set(VDT_HEADERS
+set(VDT_PUBLIC_HEADERS
   asin.h
   atan.h
   atan2.h
@@ -37,10 +26,13 @@ set(VDT_HEADERS
   vdtcore_common.h
   )
 
+# - Configure the source file
+configure_file(vdtMath.cc.in ${PROJECT_BINARY_DIR}/vdtMath.cc @ONLY)
+
 # The library
-add_library(vdt ${PROJECT_BINARY_DIR}/vdtMath_signatures.cc ${VDT_HEADERS})
+add_library(vdt ${PROJECT_BINARY_DIR}/vdtMath.cc ${VDT_PUBLIC_HEADERS})
 
 # Installation of the lib
 install(TARGETS vdt DESTINATION lib)
-install(FILES ${VDT_HEADERS} DESTINATION include/vdt)
+install(FILES ${VDT_PUBLIC_HEADERS} DESTINATION include/vdt)
 
