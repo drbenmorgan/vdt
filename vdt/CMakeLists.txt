@@ -29,8 +29,14 @@ set(VDT_PUBLIC_HEADERS
 # - Configure the source file
 configure_file(vdtMath.cc.in ${PROJECT_BINARY_DIR}/vdtMath.cc @ONLY)
 
-# The library
+# The library and its properties
 add_library(vdt ${PROJECT_BINARY_DIR}/vdtMath.cc ${VDT_PUBLIC_HEADERS})
+
+set_target_properties(vdt
+  PROPERTIES
+    VERSION ${VDT_VERSION}
+    SOVERSION ${VDT_VERSION_MAJOR}
+  )
 
 # Installation of the lib
 install(TARGETS vdt DESTINATION lib)
