@@ -39,9 +39,6 @@ option(VDT_WITH_NEON "Build with NEON instruction set" OFF)
 # - Vc library option
 option(VDT_WITH_VC "Build with Vc library" OFF)
 
-# - Need to update this so it works through the build mode
-option(DEBUG "Compile library with debug symbols" OFF)
-
 #-----------------------------------------------------------------------
 # Compiler detection and setup
 # determine compiler type and version
@@ -138,7 +135,7 @@ else()
 endif()
 
 set(INLINE_OPT " --param vect-max-version-for-alias-checks=50 --param inline-unit-growth=150")
-set(VERBOSITY_OPT "-Winline ")
+set(VERBOSITY_OPT "-Winline")
 
 # compiler dependent changes
 if(COMPILER_IS_ICC)
@@ -155,29 +152,12 @@ endif()
 
 set(WARNING_FLAGS "-W -Wall -Werror -Wno-error=unused-parameter")
 
-set(DEBUG_FLAGS " ")
-if(DEBUG)
-  set(DEBUG_FLAGS " -g")
-  message(STATUS "Adding debugging symbols")
-endif()
-
-set(COMMON_FLAGS "${INTEL_SVML_FLAGS} ${SSE_AVX}  ${INLINE_OPT} ${WARNING_FLAGS} ${DEBUG_FLAGS}")
+set(COMMON_FLAGS "${INTEL_SVML_FLAGS} ${SSE_AVX} ${INLINE_OPT} ${WARNING_FLAGS}")
 set(LIB_FLAGS "${VERBOSITY_OPT} ${VECT_OPT} ${VECTORIZER_VERBOSITY} ${COMMON_FLAGS}")
-set(DIAG_FLAGS "${CPP11_OPT} ${COMMON_FLAGS} ${LIBTIMINGAPPLE} ${VECT_OPT}")
 
 # Locations
 # Location of executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-
-# Location of sources
-set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
-
-# Location of library
-set(LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
-
-# Common Includes
-set(INC_DIR ${PROJECT_SOURCE_DIR}/vdt)
-
 
 #-----------------------------------------------------------------------
 # Build submodules
@@ -197,6 +177,7 @@ if(VDT_ENABLE_TESTING AND NOT COMPILER_IS_OLD_GCC)
     set(LIBTIMINGAPPLE "-framework Carbon")
   endif() 
 
+  set(DIAG_FLAGS "${CPP11_OPT} ${COMMON_FLAGS} ${LIBTIMINGAPPLE} ${VECT_OPT}")
   enable_testing()
   add_subdirectory(testing)
 else()
