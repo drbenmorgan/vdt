@@ -1,0 +1,25 @@
+// VDT Math Preload Signatures
+double asin(double x){return vdt::fast_asin(x);}
+float asinf(float x){return vdt::fast_asinf(x);}
+float asin(float x){return vdt::fast_asin(x);}
+double atan(double x){return vdt::fast_atan(x);}
+float atanf(float x){return vdt::fast_atanf(x);}
+float atan(float x){return vdt::fast_atan(x);}
+double atan2(double x, double y){return vdt::fast_atan2(x, y);}
+float atan2f(float x, float y){return vdt::fast_atan2f(x, y);}
+float atan2(float x, float y){return vdt::fast_atan2(x, y);}
+double acos(double x){return vdt::fast_acos(x);}
+float acosf(float x){return vdt::fast_acosf(x);}
+float acos(float x){return vdt::fast_acos(x);}
+double cos(double x){return vdt::fast_cos(x);}
+float cosf(float x){return vdt::fast_cosf(x);}
+float cos(float x){return vdt::fast_cos(x);}
+double log(double x){return vdt::fast_log(x);}
+float logf(float x){return vdt::fast_logf(x);}
+float log(float x){return vdt::fast_log(x);}
+double sin(double x){return vdt::fast_sin(x);}
+float sinf(float x){return vdt::fast_sinf(x);}
+float sin(float x){return vdt::fast_sin(x);}
+double tan(double x){return vdt::fast_tan(x);}
+float tanf(float x){return vdt::fast_tanf(x);}
+float tan(float x){return vdt::fast_tan(x);}
