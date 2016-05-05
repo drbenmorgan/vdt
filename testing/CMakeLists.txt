@@ -3,6 +3,9 @@ set(CMAKE_CXX_FLAGS ${DIAG_FLAGS})
 
 include_directories(diagnostic)
 include_directories(${PROJECT_SOURCE_DIR}/vdt)
+include_directories(${PROJECT_BINARY_DIR})
+
+configure_file(diagnostic/externalLibcfg.h.cmake ${PROJECT_BINARY_DIR}/externalLibcfg.h)
 
 # Unit Tests
 add_subdirectory(units)
@@ -14,10 +17,9 @@ add_exe_and_link(vdtArithmComparison vdtArithmComparison.cpp None)
 
 # Build Vc wrapper (without c++11)
 if(VDT_WITH_VC)
-  configure_file(externalLibcfg.h.cmake ${PROJECT_BINARY_DIR}/externalLibcfg.h)
   # Generate the wrapper sources
   add_custom_command(
-    OUTPUT 
+    OUTPUT
       ${PROJECT_BINARY_DIR}/vdtdiag_vcWrapper.h
       ${PROJECT_BINARY_DIR}/vdtdiag_vcWrapper.cc
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
@@ -28,8 +30,8 @@ if(VDT_WITH_VC)
   include_directories(${PROJECT_SOURCE_DIR}/Vc)
   include_directories(${PROJECT_SOURCE_DIR}/Vc/include)
 
-  add_library(VcWrapper 
-    ${PROJECT_BINARY_DIR}/vdtdiag_vcWrapper.cc 
+  add_library(VcWrapper
+    ${PROJECT_BINARY_DIR}/vdtdiag_vcWrapper.cc
     ${PROJECT_BINARY_DIR}/vdtdiag_vcWrapper.h
     )
   target_link_libraries(VcWrapper libVc.a)

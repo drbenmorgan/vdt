@@ -134,7 +134,9 @@ endif()
 # set compiler options
 # Compiler optimisations
 set(VECT_OPT "-O3 -ffast-math -ftree-vectorize")
-set(VECTORIZER_VERBOSITY "-ftree-vectorizer-verbose=0")
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set(VECTORIZER_VERBOSITY "-ftree-vectorizer-verbose=0")
+endif()
 
 if("4.7.0" VERSION_LESS "${_gcc_version}")
  set(CPP11_OPT "-std=gnu++0x")
@@ -142,9 +144,10 @@ else()
  set(CPP11_OPT "-std=c++11")
 endif()
 
-
+if(CMAKE_COMPILER_IS_GNUCXX)
 set(INLINE_OPT " --param vect-max-version-for-alias-checks=50 --param inline-unit-growth=150")
 set(VERBOSITY_OPT "-Winline")
+endif()
 
 # compiler dependent changes
 if(COMPILER_IS_ICC)
@@ -184,9 +187,9 @@ if(VDT_ENABLE_TESTING AND NOT COMPILER_IS_OLD_GCC)
   # Library for time measurement: OSx and Linux
   set (LIBTIMING "rt")
   # do not set it if on OSx
-  if(APPLE)
-    set(LIBTIMINGAPPLE "-framework Carbon")
-  endif()
+  #if(APPLE)
+  #  set(LIBTIMINGAPPLE "-framework Carbon")
+  #endif()
 
   set(DIAG_FLAGS "${CPP11_OPT} ${COMMON_FLAGS} ${LIBTIMINGAPPLE} ${VECT_OPT}")
   enable_testing()
