@@ -1,11 +1,9 @@
-prefix=${pcfiledir}/../..
-exec_prefix=${prefix}
-includedir=${prefix}/include/vdt
-libdir=${prefix}/lib
+prefix=${pcfiledir}/@vdt_PCFILEDIR_TO_PREFIX@
+libdir=${prefix}@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}@CMAKE_INSTALL_INCLUDEDIR@
 
-Name: vdt
-Description: CERN VDT (VectorizeD maTh) C++ Library for Fast Math
-Version: @VDT_VERSION@
+Name: @PROJECT_NAME@
+Version: @PROJECT_VERSION@
+Description: "Description of @PROJECT_NAME@" 
+Libs: -L${libdir} -lexamplelibrary
 Cflags: -I${includedir}
-Libs: -L${libdir} -lvdt
-

@@ -34,11 +34,14 @@ add_library(vdt ${PROJECT_BINARY_DIR}/vdtMath.cc ${VDT_PUBLIC_HEADERS})
 
 set_target_properties(vdt
   PROPERTIES
-    VERSION ${VDT_VERSION}
-    SOVERSION ${VDT_VERSION_MAJOR}
+    VERSION ${vdt_VERSION}
+    SOVERSION ${vdt_VERSION_MAJOR}
   )
 
 # Installation of the lib
-install(TARGETS vdt EXPORT vdt-libraries DESTINATION lib)
-install(FILES ${VDT_PUBLIC_HEADERS} DESTINATION include/vdt)
+install(TARGETS vdt
+  EXPORT vdtTargets
+  DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES ${VDT_PUBLIC_HEADERS}
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vdt)
 
