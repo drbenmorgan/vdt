@@ -2,9 +2,6 @@
 
 # Define this directory's flags:
 set(CMAKE_CXX_FLAGS  ${LIB_FLAGS})
-include_directories(${PROJECT_SOURCE_DIR}/vdt)
-include_directories(${PROJECT_BINARY_DIR})
-
 
 #-----------------------------------------------------------------------
 # Build the VDT library
@@ -31,6 +28,11 @@ configure_file(vdtMath.cc.in ${PROJECT_BINARY_DIR}/vdtMath.cc @ONLY)
 
 # The library and its properties
 add_library(vdt ${PROJECT_BINARY_DIR}/vdtMath.cc ${VDT_PUBLIC_HEADERS})
+target_include_directories(vdt PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/vdt>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/vdt>
+  )
 
 set_target_properties(vdt
   PROPERTIES
