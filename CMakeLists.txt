@@ -50,6 +50,9 @@ option(BUILD_SHARED_LIBS "Build VDT as a shared library" ON)
 # - Testing
 option(VDT_BUILD_TESTING "Build unit and performance tests" ON)
 
+# - Documentation
+option(VDT_BUILD_DOCS "Build documentation with Doxygen" ON)
+
 # - Provide preloading interface
 option(VDT_ENABLE_PRELOAD "Create symbols to preload the library" OFF)
 
@@ -159,7 +162,7 @@ add_subdirectory(vdt)
 
 #-----------------------------------------------------------------------
 # Configure/Build testing
-if(VDT_ENABLE_TESTING AND NOT COMPILER_IS_OLD_GCC)
+if(VDT_BUILD_TESTING)
   set(LIBTIMING "")
   set(LIBTIMINGAPPLE "")
   # Library for time measurement: OSx and Linux
@@ -174,6 +177,12 @@ if(VDT_ENABLE_TESTING AND NOT COMPILER_IS_OLD_GCC)
   add_subdirectory(testing)
 else()
   change_option(VDT_ENABLE_TESTING 0)
+endif()
+
+#-----------------------------------------------------------------------
+# Documentation
+if(VDT_BUILD_DOCS)
+  add_subdirectory(doc)
 endif()
 
 #-----------------------------------------------------------------------
